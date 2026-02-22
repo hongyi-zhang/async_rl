@@ -1,8 +1,26 @@
-# Python
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-*.pyd
+*$py.class
+
+# C extensions
 *.so
+*.pyd
+
+# Distribution / packaging
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Test / typecheck / lint caches
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
@@ -10,35 +28,25 @@ __pycache__/
 .coverage.*
 htmlcov/
 
-# Virtualenvs
-.venv/
-venv/
-ENV/
-
-# Packaging
-*.egg-info/
-dist/
-build/
-
 # Jupyter
 .ipynb_checkpoints/
 
-# Editor / OS
+# IDE / OS
 .DS_Store
 .idea/
 .vscode/
 
-# Local investigation clones / caches
-third_party/
-
-# Training outputs (mount these at runtime instead of committing)
+# Runtime outputs
 wandb/
 ray_results/
 logs/
-checkpoints/
 outputs/
+checkpoints/
 
-# Local datasets / models (mount these at runtime)
+# Local caches (mount at runtime instead)
+.cache/
+
+# Local datasets / models (mount at runtime instead)
 data/
 datasets/
 models/
@@ -46,3 +54,6 @@ models/
 # Secrets
 .env
 .env.*
+
+# Local investigation clones
+third_party/
