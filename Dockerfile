@@ -26,7 +26,7 @@ ENV PATH="/opt/venv/bin:${PATH}"
 RUN python -m pip install --no-cache-dir --upgrade pip setuptools wheel packaging
 
 # Torch: keep CUDA wheel channel configurable for cu128/cu129/cu130 bases.
-ARG TORCH_VERSION="2.8.0"
+ARG TORCH_VERSION="2.9.1"
 ARG TORCH_CUDA_TAG="cu129"
 RUN python -m pip install --no-cache-dir --index-url "https://download.pytorch.org/whl/${TORCH_CUDA_TAG}" \
     "torch==${TORCH_VERSION}+${TORCH_CUDA_TAG}"
@@ -39,18 +39,31 @@ RUN python -m pip install --no-cache-dir -r /tmp/requirements.txt
 # Enable with: --build-arg INSTALL_MEGATRON_STACK=1
 ARG INSTALL_MEGATRON_STACK="0"
 ARG ENABLE_CUDA_13="0"
+ARG NCCL_VERSION="v2.27.7-1"
+ARG NCCL_INSTALL_PREFIX="/usr/local/nccl"
 ARG MEGATRON_COMMIT="3714d81d418c9f1bca4594fc35f9e8289f652862"
 ARG MBRIDGE_REF="89eb10887887bc74853f89a4de258c0702932a1c"
 ARG TORCH_MEMORY_SAVER_REF="dc6876905830430b5054325fa4211ff302169c6b"
 ARG MEGATRON_BRIDGE_REF="dev_rl"
 
 RUN if [ "${INSTALL_MEGATRON_STACK}" = "1" ]; then \
+      git clone --depth 1 --branch "${NCCL_VERSION}" https://github.com/NVIDIA/nccl.git /tmp/nccl && \
+      make -C /tmp/nccl -j"$(nproc)" src.build CUDA_HOME=/usr/local/cuda && \
+      make -C /tmp/nccl src.install PREFIX="${NCCL_INSTALL_PREFIX}" && \
+      echo "${NCCL_INSTALL_PREFIX}/lib" > /etc/ld.so.conf.d/nccl.conf && ldconfig && \
+      rm -rf /tmp/nccl && \
       MAX_JOBS=64 python -m pip install --no-cache-dir --no-build-isolation flash-attn==2.7.4.post1 && \
       python -m pip install --no-cache-dir "git+https://github.com/ISEEKYAN/mbridge.git@${MBRIDGE_REF}" --no-deps && \
       if [ "${ENABLE_CUDA_13}" = "1" ]; then \
         python -m pip install --no-cache-dir nvidia-mathdx==26.6.0 && \
+        NCCL_HOME="${NCCL_INSTALL_PREFIX}" NCCL_ROOT="${NCCL_INSTALL_PREFIX}" \
+        NCCL_INCLUDE_DIR="${NCCL_INSTALL_PREFIX}/include" NCCL_LIB_DIR="${NCCL_INSTALL_PREFIX}/lib" \
+        PKG_CONFIG_PATH="${NCCL_INSTALL_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH}" \
         python -m pip install --no-cache-dir --no-build-isolation "git+https://github.com/NVIDIA/TransformerEngine.git@release_v2.10"; \
       else \
+        NCCL_HOME="${NCCL_INSTALL_PREFIX}" NCCL_ROOT="${NCCL_INSTALL_PREFIX}" \
+        NCCL_INCLUDE_DIR="${NCCL_INSTALL_PREFIX}/include" NCCL_LIB_DIR="${NCCL_INSTALL_PREFIX}/lib" \
+        PKG_CONFIG_PATH="${NCCL_INSTALL_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH}" \
         python -m pip install --no-cache-dir --no-build-isolation "transformer_engine[pytorch]==2.10.0"; \
       fi && \
       python -m pip install --no-cache-dir flash-linear-attention==0.4.0 && \

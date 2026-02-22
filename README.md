@@ -26,14 +26,17 @@ For Megatron unified FP8 on a bare CUDA+Python base, set `INSTALL_MEGATRON_STACK
 ```bash
 docker build -t miles-gpt-oss:dev \
   --build-arg BASE_IMAGE="<your-debian12-cuda12.9-py3.12-base>" \
+  --build-arg TORCH_VERSION="2.9.1" \
   --build-arg TORCH_CUDA_TAG="cu129" \
   --build-arg INSTALL_MEGATRON_STACK=1 \
+  --build-arg NCCL_VERSION="v2.27.7-1" \
   --build-arg MILES_REPO="https://github.com/hongyi-zhang/miles.git" \
   --build-arg MILES_REF="3cba08a9a8a4f53f1d128a85efb86364cf39589b" \
   .
 ```
 
 Set `INSTALL_MEGATRON_STACK=0` (default) if your base image already provides a compatible Megatron stack.
+When `INSTALL_MEGATRON_STACK=1`, the image now builds NCCL from source (default `NCCL_VERSION=v2.27.7-1`) so `transformer_engine` can compile on bare CUDA 12.9 bases.
 `MILES_REPO` / `MILES_REF` are configurable; defaults in `Dockerfile` already point to the fork commit with GPT-OSS unified-FP8 bridge fixes.
 
 ## Run on a multi-node cluster
