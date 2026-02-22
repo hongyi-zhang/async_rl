@@ -1,0 +1,19 @@
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+dist/
+build/
+
+# Local clones used for investigation
+third_party/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+
+# Hugging Face / Torch caches (should be mounted at runtime if desired)
+.cache/

@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Virtualenvs
+.venv/
+venv/
+ENV/
+
+# Packaging
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+
+# Local investigation clones / caches
+third_party/
+
+# Training outputs (mount these at runtime instead of committing)
+wandb/
+ray_results/
+logs/
+checkpoints/
+outputs/
+
+# Local datasets / models (mount these at runtime)
+data/
+datasets/
+models/
+
+# Secrets
+.env
+.env.*
