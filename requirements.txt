@@ -2,6 +2,9 @@
 transformers==4.55.0
 kernels==0.12.1
 
+# Megatron + TransformerEngine for unified FP8 can be installed via
+# Dockerfile build arg INSTALL_MEGATRON_STACK=1. Keep shared deps here.
+
 # Miles runtime deps (subset; keeps versions compatible with Py3.12)
 accelerate>=0.33.0
 blobfile>=2.1.0
@@ -15,6 +18,8 @@ pyyaml>=6.0.1
 ray[default]>=2.10.0
 tensorboard>=2.17.0
 wandb>=0.17.0
+ring_flash_attn
+qwen_vl_utils
 
 # Rollout / serving
 sglang[all]==0.5.7
